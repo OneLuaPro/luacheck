@@ -1,46 +1,57 @@
-# Luacheck
-
-[![Join the chat at https://gitter.im/luacheck/Lobby](https://badges.gitter.im/luacheck/Lobby.svg)](https://gitter.im/luacheck/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![Luacheck](https://img.shields.io/github/actions/workflow/status/lunarmodules/luacheck/luacheck.yml?branch=master&label=Luacheck&logo=Lua)](https://github.com/lunarmodules/luacheck/actions?workflow=Luacheck)
-[![Busted](https://img.shields.io/github/actions/workflow/status/lunarmodules/luacheck/busted.yml?branch=master&label=Busted&logo=Lua)](https://github.com/lunarmodules/luacheck/actions?workflow=Busted)
-[![Coverage Status](https://img.shields.io/coveralls/github/lunarmodules/luacheck?label=Coveralls&logo=Coveralls)](https://coveralls.io/github/lunarmodules/luacheck?branch=master)
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/lunarmodules/luacheck?label=Tag&logo=GitHub)](https://github.com/lunarmodules/luacheck/releases)
-[![Luarocks](https://img.shields.io/luarocks/v/lunarmodules/luacheck?label=Luarocks&logo=Lua)](https://luarocks.org/modules/lunarmodules/luacheck)
-
-## Contents
-
-* [Overview](#overview)
-* [Installation](#installation)
-* [Basic usage](#basic-usage)
-* [Related projects](#related-projects)
-* [Documentation](#documentation)
-* [Development](#development)
-* [Building and testing](#building-and-testing)
-* [License](#license)
-
-## Overview
+# Luacheck with CMake Support
 
 Luacheck is a static analyzer and a linter for [Lua](http://www.lua.org). Luacheck detects various issues such as usage of undefined global variables, unused variables and values, accessing uninitialized variables, unreachable code and more. Most aspects of checking are configurable: there are options for defining custom project-related globals, for selecting set of standard globals (version of Lua standard library), for filtering warnings by type and name of related variable, etc. The options can be used on the command line, put into a config or directly into checked files as Lua comments.
 
 Luacheck supports checking Lua files using syntax of Lua 5.1 - 5.4, and LuaJIT. Luacheck itself is written in Lua and runs on all of mentioned Lua versions.
 
-## Installation
+## Installing Luacheck
 
-### Using LuaRocks
+### Prerequisites
 
-From your command line run the following command (using `sudo` if necessary):
+Luacheck with CMake Support relies on an installation of [Lua with CMake Support](https://github.com/KritzelKratzel/lua#readme). The same toolchain which has been used with *Lua with CMake Support* is required. Luacheck gets all necessary path information from CMake `liblua` package data and will be installed automatically into the right directory locations - no hassle with `package.path` settings anymore.
 
+### Install
+
+**Note**: As Luacheck does not comprise any files to be compiled and linked (just files to be installed properly) the mention of architecture or configuration below is somewhat arbitrary. 
+
+Open `Developer Command Prompt for VS 2022` and change drive and directory. Download and unpack sources or simply clone this repository:
+
+```cmd
+c:
+cd c:\Temp
+git clone git@github.com:KritzelKratzel/luacheck.git
+cd argparse
 ```
-luarocks install luacheck
+
+CMake strongly encourages out-of-source builds.
+
+```cmd
+mkdir build
+cd build
+cmake .. -G "Visual Studio 17 2022" -A <arch>
+cmake --build . --config Release
+cmake --install . --config Release
 ```
 
-For parallel checking Luacheck additionally requires [LuaLanes](https://github.com/LuaLanes/lanes), which can be installed using LuaRocks as well (`luarocks install lanes`).
+Replace `<arch>` with your desired architecture. Available architectures with selected `Visual Studio 17 2022` generator are `Win32`, `x64`, `ARM` and `ARM64`. Luacheck documentation is available in `<lua_install_dir>/share/doc/luacheck` after install. Documentation is also available [online](https://luacheck.readthedocs.io/en/stable/).
 
-### Windows binary download
+### Sync this fork with original Luacheck repository
 
-For Windows there is single-file 64-bit binary distribution, bundling Lua 5.4.4, Luacheck, LuaFileSystem, and LuaLanes using [LuaStatic](https://github.com/ers35/luastatic):
-[download](https://github.com/lunarmodules/luacheck/releases/download/v1.1.0/luacheck.exe).
+Open Git Bash and execute `./SyncFork.sh`.
+
+```bash
+John Doe@DESKTOP-1HK25HF MINGW64 /c/misc/luacheck (master)
+$ ./SyncFork.sh
+Original remote repo found.
+Already on 'master'
+Your branch is up to date with 'origin/master'.
+From github.com:KritzelKratzel/luacheck
+ * branch            master     -> FETCH_HEAD
+Already up to date.
+Already up to date.
+Everything up-to-date
+John Doe@DESKTOP-1HK25HF MINGW64 /c/misc/luacheck (master)
+```
 
 ## Basic usage
 
