@@ -48,10 +48,10 @@ cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
 
 # ------------------------------------------------------------------------------
 # find liblua installation and version info
-if(WIN32)
-  set(LUA_HINTS "c:/Apps")
-else()
-  set(LUA_HINTS "")
+if(NOT LUA_HINTS)
+  if(WIN32)
+    set(LUA_HINTS "c:/Apps")
+  endif()
 endif()
 find_package(liblua REQUIRED CONFIG HINTS ${LUA_HINTS})
 if(liblua_FOUND)
