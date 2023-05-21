@@ -4,9 +4,7 @@ local options = require "luacheck.options"
 local format = require "luacheck.format"
 local utils = require "luacheck.utils"
 
-local luacheck = {
-   _VERSION = "1.1.0"
-}
+local init = {}
 
 local function raw_validate_options(fname, opts, stds, context)
    local ok, err = options.validate(options.all_options, opts, stds)
@@ -37,8 +35,8 @@ local function validate_options(fname, items, opts, stds)
 end
 
 -- Returns report for a string.
-function luacheck.get_report(src)
-   local msg = ("bad argument #1 to 'luacheck.get_report' (string expected, got %s)"):format(type(src))
+function init.get_report(src)
+   local msg = ("bad argument #1 to 'init.get_report' (string expected, got %s)"):format(type(src))
    assert(type(src) == "string", msg)
    return check(src)
 end
@@ -46,10 +44,10 @@ end
 -- Applies options to reports. Reports with .fatal field are unchanged.
 -- Options are applied to reports[i] in order: options, options[i], options[i][1], options[i][2], ...
 -- Returns new array of reports, adds .warnings, .errors and .fatals fields to this array.
-function luacheck.process_reports(reports, opts, stds)
-   local msg = ("bad argument #1 to 'luacheck.process_reports' (table expected, got %s)"):format(type(reports))
+function init.process_reports(reports, opts, stds)
+   local msg = ("bad argument #1 to 'init.process_reports' (table expected, got %s)"):format(type(reports))
    assert(type(reports) == "table", msg)
-   validate_options("luacheck.process_reports", reports, opts, stds)
+   validate_options("init.process_reports", reports, opts, stds)
    local report = filter.filter(reports, opts, stds)
    report.warnings = 0
    report.errors = 0
@@ -74,17 +72,17 @@ end
 
 -- Checks strings with options, returns report.
 -- Tables with .fatal field are unchanged.
-function luacheck.check_strings(srcs, opts)
-   local msg = ("bad argument #1 to 'luacheck.check_strings' (table expected, got %s)"):format(type(srcs))
+function init.check_strings(srcs, opts)
+   local msg = ("bad argument #1 to 'init.check_strings' (table expected, got %s)"):format(type(srcs))
    assert(type(srcs) == "table", msg)
 
    for _, item in ipairs(srcs) do
-      msg = ("bad argument #1 to 'luacheck.check_strings' (array of strings or tables expected, got %s)"):format(
+      msg = ("bad argument #1 to 'init.check_strings' (array of strings or tables expected, got %s)"):format(
          type(item))
       assert(type(item) == "string" or type(item) == "table", msg)
    end
 
-   validate_options("luacheck.check_strings", srcs, opts)
+   validate_options("init.check_strings", srcs, opts)
 
    local reports = {}
 
@@ -92,25 +90,25 @@ function luacheck.check_strings(srcs, opts)
       if type(src) == "table" and src.fatal then
          reports[i] = src
       else
-         reports[i] = luacheck.get_report(src)
+         reports[i] = init.get_report(src)
       end
    end
 
-   return luacheck.process_reports(reports, opts)
+   return init.process_reports(reports, opts)
 end
 
-function luacheck.check_files(files, opts)
-   local msg = ("bad argument #1 to 'luacheck.check_files' (table expected, got %s)"):format(type(files))
+function init.check_files(files, opts)
+   local msg = ("bad argument #1 to 'init.check_files' (table expected, got %s)"):format(type(files))
    assert(type(files) == "table", msg)
 
    for _, item in ipairs(files) do
-      msg = ("bad argument #1 to 'luacheck.check_files' (array of paths or file handles expected, got %s)"):format(
+      msg = ("bad argument #1 to 'init.check_files' (array of paths or file handles expected, got %s)"):format(
          type(item))
       assert(type(item) == "string" or io.type(item) == "file", msg
       )
    end
 
-   validate_options("luacheck.check_files", files, opts)
+   validate_options("init.check_files", files, opts)
 
    local srcs = {}
 
@@ -119,17 +117,17 @@ function luacheck.check_files(files, opts)
       srcs[i] = src or {fatal = "I/O", msg = err}
    end
 
-   return luacheck.check_strings(srcs, opts)
+   return init.check_strings(srcs, opts)
 end
 
-function luacheck.get_message(issue)
-   local msg = ("bad argument #1 to 'luacheck.get_message' (table expected, got %s)"):format(type(issue))
+function init.get_message(issue)
+   local msg = ("bad argument #1 to 'init.get_message' (table expected, got %s)"):format(type(issue))
    assert(type(issue) == "table", msg)
    return format.get_message(issue)
 end
 
-setmetatable(luacheck, {__call = function(_, ...)
-   return luacheck.check_files(...)
+setmetatable(init, {__call = function(_, ...)
+   return init.check_files(...)
 end})
 
-return luacheck
+return init

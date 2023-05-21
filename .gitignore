@@ -12,3 +12,6 @@ build/bin/*
 package
 scripts/UnicodeData-*
 docsrc/.doctrees
+build
+*.*~
+

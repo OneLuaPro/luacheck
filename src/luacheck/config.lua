@@ -5,7 +5,7 @@ local fs = require "luacheck.fs"
 local globbing = require "luacheck.globbing"
 local standards = require "luacheck.standards"
 local utils = require "luacheck.utils"
-local luacheck = require "luacheck"
+local luacheck = require "luacheck.luacheckversion"
 
 local config = {}
 

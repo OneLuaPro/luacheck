@@ -1,7 +1,7 @@
 local argparse = require "argparse"
 local cache = require "luacheck.cache"
 local config = require "luacheck.config"
-local luacheck = require "luacheck"
+local luacheck = require "luacheck.luacheckversion"
 local multithreading = require "luacheck.multithreading"
 local profiler = require "luacheck.profiler"
 local runner = require "luacheck.runner"

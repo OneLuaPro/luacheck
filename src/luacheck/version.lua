@@ -1,6 +1,6 @@
 local argparse = require "argparse"
 local lfs = require "lfs"
-local luacheck = require "luacheck"
+local luacheck = require "luacheck.luacheckversion"
 local multithreading = require "luacheck.multithreading"
 local utils = require "luacheck.utils"
 
