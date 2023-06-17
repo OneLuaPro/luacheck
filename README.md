@@ -35,24 +35,6 @@ cmake --install . --config Release
 
 Replace `<arch>` with your desired architecture. Available architectures with selected `Visual Studio 17 2022` generator are `Win32`, `x64`, `ARM` and `ARM64`. Luacheck documentation is available in `<lua_install_dir>/share/doc/luacheck` after install. Documentation is also available [online](https://luacheck.readthedocs.io/en/stable/).
 
-### Sync this fork with original Luacheck repository
-
-Open Git Bash and execute `./SyncFork.sh`.
-
-```bash
-John Doe@DESKTOP-1HK25HF MINGW64 /c/misc/luacheck (master)
-$ ./SyncFork.sh
-Original remote repo found.
-Already on 'master'
-Your branch is up to date with 'origin/master'.
-From github.com:KritzelKratzel/luacheck
- * branch            master     -> FETCH_HEAD
-Already up to date.
-Already up to date.
-Everything up-to-date
-John Doe@DESKTOP-1HK25HF MINGW64 /c/misc/luacheck (master)
-```
-
 ## Basic usage
 
 After Luacheck is installed, run `luacheck` program from the command line. Pass a list of files, [rockspecs](https://github.com/luarocks/luarocks/wiki/Rockspec-format) or directories (requires LuaFileSystem) to be checked:
@@ -120,7 +102,7 @@ Documentation can be built using [Sphinx](http://sphinx-doc.org/): `sphinx-build
 
 ## Development
 
-Luacheck is currently in development. The latest released version is v1.1.0. The interface of the `luacheck` module may change between minor releases. The command line interface is fairly stable.
+Luacheck is currently in development. The latest released version is v1.1.1. The interface of the `luacheck` module may change between minor releases. The command line interface is fairly stable.
 
 Use the Luacheck issue tracker on GitHub to submit bugs, suggestions and questions. Any pull requests are welcome, too.
 
