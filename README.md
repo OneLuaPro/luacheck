@@ -35,6 +35,9 @@ cmake --install . --config Release
 
 Replace `<arch>` with your desired architecture. Available architectures with selected `Visual Studio 17 2022` generator are `Win32`, `x64`, `ARM` and `ARM64`. Luacheck documentation is available in `<lua_install_dir>/share/doc/luacheck` after install. Documentation is also available [online](https://luacheck.readthedocs.io/en/stable/).
 
+For Windows there is single-file 64-bit binary distribution, bundling Lua 5.4.4, Luacheck, LuaFileSystem, and LuaLanes using [LuaStatic](https://github.com/ers35/luastatic):
+[download](https://github.com/lunarmodules/luacheck/releases/download/v1.1.1/luacheck.exe).
+
 ## Basic usage
 
 After Luacheck is installed, run `luacheck` program from the command line. Pass a list of files, [rockspecs](https://github.com/luarocks/luarocks/wiki/Rockspec-format) or directories (requires LuaFileSystem) to be checked:
