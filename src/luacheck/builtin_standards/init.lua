@@ -336,7 +336,8 @@ builtin_standards.ldoc = {
 
 builtin_standards.sile = {
    globals = {
-      "SILE", "SU", "luautf8", "pl", "fluent", "CASILE"
+      package = { fields = { "searchpath" } },
+      "SILE", "SU", "luautf8", "pl", "fluent", "executablePath", "extendSilePath", "CASILE"
    }
 }
 

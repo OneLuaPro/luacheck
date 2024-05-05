@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2023-12-08
+
+### Features
+
+- Support NO_COLOR environment variable (#102) — @ligurio
+
+### Bug Fixes
+
+- Update SILE builtin with more allowed variables — @alerque
+
 ## [1.1.1] - 2023-06-09
 
 ### Features
