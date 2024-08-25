@@ -1023,7 +1023,7 @@ spec/samples/python_code.lua:1:6: (E011) expected '=' near '__future__'
    end)
 
    it("expands folders", function()
-      assert.matches("^Total: %d+ warnings / %d+ errors in 27 files\n$", get_output "spec/samples -qqq --no-config --exclude-files spec/samples/global_fields.lua")
+      assert.matches("^Total: %d+ warnings / %d+ errors in 28 files\n$", get_output "spec/samples -qqq --no-config --exclude-files spec/samples/global_fields.lua")
    end)
 
    it("uses --include-files when expanding folders", function()
@@ -1242,6 +1242,7 @@ Checking spec/samples/globals.lua                 2 warnings
 Checking spec/samples/indirect_globals.lua        3 warnings
 Checking spec/samples/inline_options.lua          7 warnings / 2 errors
 Checking spec/samples/line_length.lua             8 warnings
+Checking spec/samples/minetest.lua                2 warnings
 Checking spec/samples/python_code.lua             1 error
 Checking spec/samples/read_globals.lua            5 warnings
 Checking spec/samples/read_globals_inline_options.lua 3 warnings
@@ -1252,7 +1253,7 @@ Checking spec/samples/unused_secondaries.lua      4 warnings
 Checking spec/samples/utf8.lua                    4 warnings
 Checking spec/samples/utf8_error.lua              1 error
 
-Total: 73 warnings / 9 errors in 20 files
+Total: 75 warnings / 9 errors in 21 files
 ]]):gsub("(spec/samples)/", "%1"..package.config:sub(1, 1)),
             get_output "spec/samples --config=spec/configs/exclude_files_config.luacheckrc -qq --exclude-files spec/samples/global_fields.lua")
          end)
@@ -1268,6 +1269,7 @@ Checking globals.lua                              2 warnings
 Checking indirect_globals.lua                     3 warnings
 Checking inline_options.lua                       7 warnings / 2 errors
 Checking line_length.lua                          8 warnings
+Checking minetest.lua                             2 warnings
 Checking python_code.lua                          1 error
 Checking read_globals.lua                         5 warnings
 Checking read_globals_inline_options.lua          3 warnings
@@ -1278,7 +1280,7 @@ Checking unused_secondaries.lua                   4 warnings
 Checking utf8.lua                                 4 warnings
 Checking utf8_error.lua                           1 error
 
-Total: 73 warnings / 9 errors in 20 files
+Total: 75 warnings / 9 errors in 21 files
 ]], get_output(". --config=spec/configs/exclude_files_config.luacheckrc -qq --exclude-files global_fields.lua", "spec/samples/"))
          end)
 
@@ -1293,6 +1295,7 @@ Checking globals.lua                              2 warnings
 Checking indirect_globals.lua                     3 warnings
 Checking inline_options.lua                       7 warnings / 2 errors
 Checking line_length.lua                          8 warnings
+Checking minetest.lua                             2 warnings
 Checking python_code.lua                          1 error
 Checking redefined.lua                            7 warnings
 Checking reversed_fornum.lua                      1 warning
@@ -1301,7 +1304,7 @@ Checking unused_secondaries.lua                   4 warnings
 Checking utf8.lua                                 4 warnings
 Checking utf8_error.lua                           1 error
 
-Total: 65 warnings / 9 errors in 18 files
+Total: 67 warnings / 9 errors in 19 files
 ]], get_output(". --config=spec/configs/exclude_files_config.luacheckrc -qq --exclude-files global_fields.lua --exclude-files " .. quote("./read*"), "spec/samples/"))
          end)
 
@@ -1349,6 +1352,17 @@ Checking spec/samples/globals.lua                 1 warning
 
 Total: 1 warning / 0 errors in 1 file
 ]], get_output "spec/samples/globals.lua --config=spec/configs/import_config.luacheckrc")
+         end)
+
+         describe("responds to builtin std preset", function()
+            it("minetest", function()
+               -- make sure minetest sample has something that normally throws a lint error
+               assert.equal(1, get_exitcode "spec/samples/minetest.lua --no-config")
+               -- turning on minetest std should pass all lints
+               assert.equal(0, get_exitcode "spec/samples/minetest.lua --no-config --std minetest")
+               -- confirm minetest std set isn't just blindly allowing anything
+               assert.equal(1, get_exitcode "spec/samples/sample.rockspec --no-config --std minetest")
+            end)
          end)
 
          describe("global path", function()

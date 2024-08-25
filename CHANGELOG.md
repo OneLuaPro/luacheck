@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2024-05-24
+
+### Features
+
+- Add builtin standards support for minetest (#108) — @BuckarooBanzay and @appgurueu
+
+### Performance
+
+- Memoize results to addresses speed refression from new feature in v0.26 (#105) — @tomlau10
+
 ## [1.1.2] - 2023-12-08
 
 ### Features
