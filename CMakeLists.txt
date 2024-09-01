@@ -68,7 +68,9 @@ endif()
 # ------------------------------------------------------------------------------
 # Installation prefix directory - automatically set from find_package()
 # Needs to be defined before project definition statement - for whatever reason
-set(CMAKE_INSTALL_PREFIX ${LIBLUA_INSTALLDIR})
+if(NOT CMAKE_INSTALL_PREFIX)
+  set(CMAKE_INSTALL_PREFIX ${LIBLUA_INSTALLDIR})
+endif()
 
 # ------------------------------------------------------------------------------
 # Project defintion
@@ -87,9 +89,11 @@ set(INSTALL_BINDIR
   ${CMAKE_INSTALL_BINDIR} CACHE PATH "Installation directory for executables")
 set(INSTALL_DOCDIR
   ${CMAKE_INSTALL_DOCDIR} CACHE PATH "Installation directory for documentation")
+set(INSTALL_DATAROOTDIR
+  ${CMAKE_INSTALL_DATAROOTDIR} CACHE PATH "Installation directory for data")
 # Lua-specific installation dirs
 set(INSTALL_TOP_LDIR
-  ${LIBLUA_INSTALLDIR}/share/lua/${liblua_VERSION_MAJOR}.${liblua_VERSION_MINOR})
+  ${INSTALL_DATAROOTDIR}/lua/${liblua_VERSION_MAJOR}.${liblua_VERSION_MINOR})
 
 # ------------------------------------------------------------------------------
 # Install luacheck files and docs
