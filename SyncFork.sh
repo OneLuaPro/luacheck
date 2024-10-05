@@ -21,3 +21,4 @@ git fetch $rn
 git merge $rn/master
 git push origin master
 
+read -p "Press enter to close window"
