@@ -162,11 +162,11 @@ As a case study, here is how a workflow could be setup in GitHub Actions:
 name: Luacheck
 on: [push, pull_request]
 jobs:
-  sile:
+  luacheck:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Luacheck linter
         uses: lunarmodules/luacheck@v1
 ```
