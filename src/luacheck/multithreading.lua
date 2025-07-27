@@ -90,7 +90,10 @@ function multithreading.pmap(func, array, jobs)
    local results = {}
 
    for _, worker in ipairs(workers) do
-      local _, ok, worker_results = assert(worker:join())
+      -- local _, ok, worker_results = assert(worker:join())
+      local _, _, ok, worker_results = assert(worker:join())
+      -- lanes v4.0.0 API changed on Jun 5, 2025
+      -- https://github.com/LuaLanes/lanes/commit/bfdc7a92c4e3e99522abb6d90ef2cbb021f36fc8
 
       if ok then
          utils.update(results, worker_results)
