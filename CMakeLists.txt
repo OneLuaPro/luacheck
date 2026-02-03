@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2023-2024 Kritzel Kratzel.
+# Copyright (c) 2023-2026 Kritzel Kratzel.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in 
@@ -74,13 +74,11 @@ endif()
 
 # ------------------------------------------------------------------------------
 # Project defintion
-project(luacheck)
+project(luacheck CXX)
 
 # ------------------------------------------------------------------------------
 # Other settings
 set(CMAKE_VERBOSE_MAKEFILE OFF)
-# luacheck has nothing to build, only some files to install
-set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
 
 # ------------------------------------------------------------------------------
 # Setup GNU-alike installatin directories
@@ -96,12 +94,62 @@ set(INSTALL_TOP_LDIR
   ${INSTALL_DATAROOTDIR}/lua/${liblua_VERSION_MAJOR}.${liblua_VERSION_MINOR})
 
 # ------------------------------------------------------------------------------
-# Install luacheck files and docs
-install(PROGRAMS bin/luacheck.lua DESTINATION ${INSTALL_BINDIR})
+# luacheck Launcher (.exe instead of .bat)
 if(WIN32)
-  # *.bat-launcher for Windows
-  install(FILES bin/luacheck.bat DESTINATION ${INSTALL_BINDIR})
+
+  # Define absolute paths for the input Lua script and the generated C++ header
+  set(LUACHECK_INPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/bin/luacheck.lua")
+  set(LUACHECK_HEADER_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated/luacheck_source.h")
+
+  # Define the generation rule: Converts the Lua script into a C-style hex array.
+  # This avoids encoding issues and delimiter conflicts in C++ string literals.
+  # Ensure the header is rebuilt if the Lua script or the converter script changes
+  # VERBATIM ensures correct argument escaping for the Windows Shell/MSBuild
+  add_custom_command(
+    OUTPUT "${LUACHECK_HEADER_FILE}"
+    COMMAND ${CMAKE_COMMAND} 
+    -DINPUT_FILE=${LUACHECK_INPUT_FILE}
+    -DOUTPUT_FILE=${LUACHECK_HEADER_FILE} 
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/convert_lua_to_hex.cmake"
+    DEPENDS "${LUACHECK_INPUT_FILE}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/convert_lua_to_hex.cmake"
+    COMMENT "Converting luacheck.lua to hex header..."
+    VERBATIM
+  )
+
+  # Define the executable target
+  add_executable(LuacheckLauncher
+    logo/lua-logo-olp-dist.rc # Windows resource file (icon/metadata)
+    bin/luacheck.cpp          # Main C++ launcher logic
+    "${LUACHECK_HEADER_FILE}" # Listing the header here makes it visible to MSBuild's dependency scanner
+  )
+
+  # Mark the file as generated so CMake doesn't look for it during the initial configuration
+  set_source_files_properties("${LUACHECK_HEADER_FILE}" PROPERTIES GENERATED TRUE)
+
+  # Crucial for MSVC/MSBuild: Tells the compiler that luacheck.cpp MUST be recompiled 
+  # whenever luacheck_source.h is updated. This bridges the gap between the custom command and
+  # the C++ build.
+  set_source_files_properties(luacheck.cpp PROPERTIES OBJECT_DEPENDS "${LUACHECK_HEADER_FILE}")
+
+  # Include directories: ensure the compiler finds both Lua headers and our generated hex header
+  target_include_directories(LuacheckLauncher PRIVATE ${LIBLUA_INCLUDEDIR})
+  target_include_directories(LuacheckLauncher PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated")
+
+  # Linker: Set path for the Lua library
+  target_link_directories(LuacheckLauncher PRIVATE ${LIBLUA_LIBDIR})
+  
+  # Link dependencies: liblua for the interpreter and pathcch for Windows path handling
+  target_link_libraries(LuacheckLauncher PRIVATE liblua.lib pathcch.lib)
+
+  # Rename the final binary to 'luacheck.exe' (default would be LuacheckLauncher.exe)
+  set_target_properties(LuacheckLauncher PROPERTIES OUTPUT_NAME "luacheck")
+
+  # Define the installation rule for the resulting binary
+  install(TARGETS LuacheckLauncher RUNTIME DESTINATION ${INSTALL_BINDIR})
 endif()
+
+# ------------------------------------------------------------------------------
+# Install luacheck files and docs
 install(DIRECTORY src/ DESTINATION ${INSTALL_TOP_LDIR}
   FILES_MATCHING PATTERN "*.lua"
 )
