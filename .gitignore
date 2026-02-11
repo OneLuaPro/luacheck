@@ -14,4 +14,4 @@ scripts/UnicodeData-*
 docsrc/.doctrees
 build
 *.*~
-
+build64

@@ -149,8 +149,47 @@ if(WIN32)
 endif()
 
 # ------------------------------------------------------------------------------
+# Documentation Generation (Pandoc)
+find_program(PANDOC_EXECUTABLE pandoc DOC "Path to pandoc executable")
+if(PANDOC_EXECUTABLE)
+  # Collect all RST files from docsrc directory
+  # Note: This will sort them alphabetically!
+  file(GLOB LUACHECK_RST_SOURCES 
+    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/docsrc" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/docsrc/*.rst")
+
+  # Ensure index.rst is ALWAYS first:
+  list(REMOVE_ITEM LUACHECK_RST_SOURCES "index.rst")
+  set(LUACHECK_RST_SOURCES "index.rst" ${LUACHECK_RST_SOURCES})
+
+  # Define build and output paths
+  set(DOC_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/doc")
+  set(DOC_HTML_OUTPUT "${DOC_BUILD_DIR}/index.html")
+  # Add command to merge and convert RST files to HTML
+  add_custom_command(
+    OUTPUT "${DOC_HTML_OUTPUT}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DOC_BUILD_DIR}"
+    COMMAND ${PANDOC_EXECUTABLE} ${LUACHECK_RST_SOURCES}
+    -f rst -t html5 -s
+    --toc --toc-depth=2
+    --embed-resources
+    --css=assets/oneluapro.css
+    --metadata title=Luacheck
+    -o "${DOC_HTML_OUTPUT}"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/docsrc"
+    COMMENT "Merging and converting luacheck RST documents to HTML"
+    VERBATIM
+  )
+  # Create a target that is built by default
+  add_custom_target(luacheck_doc ALL DEPENDS "${DOC_HTML_OUTPUT}")
+  # Install the generated HTML documentation
+  install(FILES "${DOC_HTML_OUTPUT}" DESTINATION "${INSTALL_DOCDIR}")
+else()
+  message(FATAL_ERROR "Pandoc not found. Documentation will not be generated.")
+endif()
+
+# ------------------------------------------------------------------------------
 # Install luacheck files and docs
 install(DIRECTORY src/ DESTINATION ${INSTALL_TOP_LDIR}
   FILES_MATCHING PATTERN "*.lua"
 )
-install(DIRECTORY doc-html/ DESTINATION ${INSTALL_DOCDIR})
