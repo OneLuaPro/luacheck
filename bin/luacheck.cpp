@@ -44,10 +44,18 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <shlwapi.h>
-#include <pathcch.h>
 #include <string>
 #include <vector>
+
+#ifdef USE_PATHCCH
+// newer, but incompatible with Win7 due to missing api-ms-win-core-path-l1-1-0.dll
+#include <pathcch.h>
+#define MAX_PATH_BUFFER PATHCCH_MAX_CCH
+#else
+// older, but compatible with Win7
+#include <shlwapi.h>
+#define MAX_PATH_BUFFER 32768 // same as PATHCCH_MAX_CCH
+#endif
 
 #include <lua.hpp>
 #include "luacheck_source.h"
@@ -112,15 +120,20 @@ static const char* LUA_CPATHS[] = {
 
 int main(int argc, char** argv) {
   // Determine path, where appName is currently located
-  WCHAR installPrefix[PATHCCH_MAX_CCH];
-  if (!GetModuleFileNameW(NULL, installPrefix, PATHCCH_MAX_CCH)) {
+  WCHAR installPrefix[MAX_PATH_BUFFER];
+  if (!GetModuleFileNameW(NULL, installPrefix, MAX_PATH_BUFFER)) {
     fprintf(stderr, "%s: Could not find executable path.\n", appName);
     return 1;
   }
 
   // Navigate two levels up from <INSTALL_PREFIX>/bin/luacheck.exe to <INSTALL_PREFIX>
+#ifdef USE_PATHCCH
   PathCchRemoveFileSpec(installPrefix, PATHCCH_MAX_CCH);
   PathCchRemoveFileSpec(installPrefix, PATHCCH_MAX_CCH);
+#else
+  PathRemoveFileSpecW(installPrefix);
+  PathRemoveFileSpecW(installPrefix);
+#endif
   std::string utf8Prefix = WideCharToUTF8(installPrefix);
 
   // Create new Lua state

@@ -97,6 +97,9 @@ set(INSTALL_TOP_LDIR
 # luacheck Launcher (.exe instead of .bat)
 if(WIN32)
 
+  # User option (Default: OFF for Windows 7 compatibility)
+  option(USE_PATHCCH "Use modern PathCch Library (requires Windows 8+)" OFF)
+
   # Define absolute paths for the input Lua script and the generated C++ header
   set(LUACHECK_INPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/bin/luacheck.lua")
   set(LUACHECK_HEADER_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated/luacheck_source.h")
@@ -139,7 +142,14 @@ if(WIN32)
   target_link_directories(LuacheckLauncher PRIVATE ${LIBLUA_LIBDIR})
   
   # Link dependencies: liblua for the interpreter and pathcch for Windows path handling
-  target_link_libraries(LuacheckLauncher PRIVATE liblua.lib pathcch.lib)
+  if(USE_PATHCCH)
+    # pathcch requires Windows 8 and upwards
+    target_compile_definitions(LuacheckLauncher PRIVATE USE_PATHCCH)
+    target_link_libraries(LuacheckLauncher PRIVATE liblua.lib pathcch.lib)
+  else()
+    # Shlwapi is for Windows 7 upwards compatible
+    target_link_libraries(LuacheckLauncher PRIVATE liblua.lib shlwapi.lib)
+  endif()
 
   # Rename the final binary to 'luacheck.exe' (default would be LuacheckLauncher.exe)
   set_target_properties(LuacheckLauncher PROPERTIES OUTPUT_NAME "luacheck")
